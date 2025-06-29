@@ -1,0 +1,12 @@
+services:
+  home:
+    build: ./home
+    ports:
+      - "3000:3000"
+    container_name: home_app
+
+  cart:
+    build: ./cart
+    ports:
+      - "3001:3001"
+    container_name: cart_app
