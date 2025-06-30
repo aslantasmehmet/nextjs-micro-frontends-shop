@@ -1,102 +1,118 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from 'next/link';
+import Image from 'next/image';
+import toast from 'react-hot-toast';
+
+// --- ICONS ---
+const PlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
+
+// --- DATA ---
+interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: string;
+  imageUrl: string;
+}
+
+const products: Product[] = [
+  { id: 1, name: 'Akıllı Saat', category: 'Elektronik', price: '799.99 TL', imageUrl: '/placeholder.svg' },
+  { id: 2, name: 'Kablosuz Kulaklık', category: 'Aksesuar', price: '449.99 TL', imageUrl: '/placeholder.svg' },
+  { id: 3, name: 'Mekanik Klavye', category: 'Bilgisayar', price: '1,299.99 TL', imageUrl: '/placeholder.svg' },
+  { id: 4, name: 'Oyuncu Faresi', category: 'Bilgisayar', price: '699.99 TL', imageUrl: '/placeholder.svg' },
+];
+
+// --- COMPONENTS ---
+function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: (product: Product) => void; }) {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+      <div className="aspect-square overflow-hidden">
+        <Image src={product.imageUrl} alt={product.name} width={400} height={400} className="object-cover transition-transform duration-300 group-hover:scale-105" />
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="text-lg font-semibold text-gray-800">
+          <Link href="#" className="focus:outline-none">
+            <span className="absolute inset-0" aria-hidden="true" />
+            {product.name}
+          </Link>
+        </h3>
+        <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+        <div className="mt-auto flex items-end justify-between pt-4">
+          <p className="text-xl font-bold text-gray-900">{product.price}</p>
+          <button
+            onClick={() => onAddToCart(product)}
+            className="z-10 flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            <PlusIcon className="h-4 w-4" />
+            <span>Ekle</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+// --- PAGE ---
+export default function Home() {
+  const handleAddToCart = async (product: Product) => {
+    try {
+      const response = await fetch('/cart/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product),
+      });
+      if (response.ok) {
+        toast.success(`${product.name} sepete eklendi!`);
+      } else {
+        toast.error('Ürün eklenirken bir hata oluştu.');
+      }
+    } catch (error) {
+      console.error('Sepete ekleme hatası:', error);
+      toast.error('İstek gönderilirken bir hata oluştu.');
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      {/* Main Content */}
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+              Yeni Sezon Ürünleri
+            </h1>
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+              En yeni trendleri keşfedin ve gardırobunuzu güncelleyin.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+            ))}
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white">
+        <div className="container mx-auto px-4 py-8 md:px-6">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-sm text-gray-500">
+              &copy; {new Date().getFullYear()} NextShop. Tüm hakları saklıdır.
+            </p>
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <Link href="#" className="transition-colors hover:text-gray-800">Gizlilik Politikası</Link>
+              <Link href="#" className="transition-colors hover:text-gray-800">Kullanım Şartları</Link>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );

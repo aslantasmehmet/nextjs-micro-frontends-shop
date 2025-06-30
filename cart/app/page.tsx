@@ -1,103 +1,148 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+// --- ICONS ---
+const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+);
+
+const ArrowLeftIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m12 19-7-7 7-7" />
+        <path d="M19 12H5" />
+    </svg>
+);
+
+
+// --- DATA ---
+interface CartItem {
+  id: number;
+  name: string;
+  price: string;
+  quantity: number;
+  imageUrl: string;
+}
+
+// --- PAGE ---
+export default function CartPage() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch('/cart/api/cart');
+        if (!response.ok) {
+          throw new Error('Sepet verileri alınamadı.');
+        }
+        const data = await response.json();
+        setCartItems(data);
+      } catch (err) {
+        if (err instanceof Error) setError(err.message);
+        else setError('Bilinmeyen bir hata oluştu.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCartItems();
+  }, []);
+
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => {
+      const price = parseFloat(item.price.replace(/[^0-9,-]+/g,"").replace(',','.'));
+      return total + price * item.quantity;
+    }, 0).toFixed(2);
+  };
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
+        <p className="text-lg text-gray-600 animate-pulse">Sepetiniz Yükleniyor...</p>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
+        <p className="text-lg text-red-600">Hata: {error}</p>
+      </main>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <main className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-10">
+            <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
+                <ArrowLeftIcon className="h-5 w-5" />
+                Alışverişe Devam Et
+            </Link>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+                Alışveriş Sepetim
+            </h1>
+        </div>
+
+        {cartItems.length === 0 ? (
+          <div className="text-center rounded-lg border-2 border-dashed border-gray-300 p-12">
+            <h2 className="text-xl font-medium text-gray-900">Sepetinizde ürün bulunmuyor</h2>
+            <p className="mt-2 text-sm text-gray-500">Hemen alışverişe başlayarak sepetinizi doldurun!</p>
+            <Link href="/" className="mt-6 inline-block rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-blue-700">
+              Ürünleri Keşfet
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-3">
+            {/* Cart Items */}
+            <div className="space-y-6 lg:col-span-2">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex items-start gap-6 rounded-xl bg-white p-6 shadow-sm">
+                  <Image src={item.imageUrl || '/placeholder.svg'} alt={item.name} width={100} height={100} className="h-24 w-24 rounded-lg object-cover" />
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+                    <p className="mt-2 text-lg font-bold text-gray-900">{item.price}</p>
+                    <p className="mt-1 text-sm text-gray-500">Adet: {item.quantity}</p>
+                  </div>
+                  <button className="text-gray-400 hover:text-red-600 transition-colors">
+                    <TrashIcon className="h-6 w-6" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 rounded-2xl bg-white p-8 shadow-lg">
+                <h2 className="text-2xl font-bold border-b border-gray-200 pb-4 mb-6">Sipariş Özeti</h2>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-base">
+                    <span className="text-gray-600">Ara Toplam</span>
+                    <span className="font-medium text-gray-900">{calculateTotal()} TL</span>
+                  </div>
+                  <div className="flex justify-between text-base">
+                    <span className="text-gray-600">Kargo</span>
+                    <span className="font-medium text-green-600">Ücretsiz</span>
+                  </div>
+                  <div className="flex justify-between border-t border-gray-200 pt-4 mt-4 text-xl font-bold">
+                    <span className="text-gray-900">Toplam</span>
+                    <span className="text-gray-900">{calculateTotal()} TL</span>
+                  </div>
+                </div>
+                <button className="mt-8 w-full rounded-lg bg-blue-600 py-4 text-lg font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  Güvenli Ödemeye Geç
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

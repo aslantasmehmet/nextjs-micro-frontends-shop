@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/cart/:path*',
-        destination: 'http://localhost:3001/cart/:path*',
+        destination: 'http://cart:3001/cart/:path*',
       },
     ];
   },
