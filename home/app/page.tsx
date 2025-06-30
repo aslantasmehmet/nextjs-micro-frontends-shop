@@ -80,7 +80,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Main Content */}
+      {/* Ana içerik */}
       <main className="flex-1">
         <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
@@ -100,7 +100,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Alt bilgi */}
       <footer className="border-t border-gray-200 bg-white">
         <div className="container mx-auto px-4 py-8 md:px-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">

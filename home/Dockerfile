@@ -5,13 +5,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # package.json ve package-lock.json'u kopyala
-COPY package*.json ./
+COPY home/package*.json ./
 
 # bağımlılıkları yükle
 RUN npm install
 
-# tüm dosyaları kopyala
-COPY . .
+# home uygulamasını kopyala (shared klasörü dahil)
+COPY home .
 
 # Next.js build işlemi
 RUN npm run build

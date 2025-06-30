@@ -100,7 +100,7 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-3">
-            {/* Cart Items */}
+            {/* Sepet ürünleri */}
             <div className="space-y-6 lg:col-span-2">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-start gap-6 rounded-xl bg-white p-6 shadow-sm">
@@ -117,7 +117,7 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Order Summary */}
+            {/* Sipariş özeti */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 rounded-2xl bg-white p-8 shadow-lg">
                 <h2 className="text-2xl font-bold border-b border-gray-200 pb-4 mb-6">Sipariş Özeti</h2>

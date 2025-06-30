@@ -5,19 +5,19 @@ FROM node:18-alpine
 WORKDIR /app
 
 # package.json ve package-lock.json'u kopyala
-COPY package*.json ./
+COPY cart/package*.json ./
 
 # bağımlılıkları yükle
 RUN npm install
 
-# tüm dosyaları kopyala
-COPY . .
+# cart uygulamasını kopyala (shared klasörü dahil)
+COPY cart .
 
 # Next.js build işlemi
 RUN npm run build
 
 # Uygulamanın dışarıya açılacağı port
-EXPOSE 3000
+EXPOSE 3001
 
 # Uygulama başlat
 CMD ["npm", "start"]
