@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "../shared";
+import ReduxProvider from "./providers/ReduxProvider";
+import DynamicHeader from "./components/DynamicHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-gray-100 text-gray-900 antialiased`}
       >
-        <Header 
-          cartCount={0} 
-          cartUrl="/" 
-          homeUrl="http://localhost:3000" 
-        />
-        {children}
+        <ReduxProvider>
+          <DynamicHeader />
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   );
