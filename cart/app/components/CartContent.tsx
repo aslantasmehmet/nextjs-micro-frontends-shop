@@ -198,9 +198,6 @@ export default function CartContent() {
                 <button className="mt-8 w-full rounded-lg bg-blue-600 py-4 text-lg font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                   Güvenli Ödemeye Geç
                 </button>
-                <p className="mt-3 text-xs text-gray-500 text-center">
-                  {cartItems.length} ürün • {cartItems.reduce((sum, item) => sum + item.quantity, 0)} adet
-                </p>
               </div>
             </div>
           </div>

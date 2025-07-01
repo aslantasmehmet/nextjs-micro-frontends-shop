@@ -30,7 +30,7 @@ export default function ProductImageGallery({
   ];
 
   const imageList = images.length > 0 ? images : defaultImages;
-  const currentImage = imageList[selectedImage];
+  const currentImage = imageList[selectedImage] || '/placeholder.svg';
 
   return (
     <div className="flex flex-col space-y-4">
@@ -91,6 +91,15 @@ export default function ProductImageGallery({
       >
         🔍 Büyük Görüntüle
       </button>
+
+      {/* Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="text-xs text-gray-400 p-2 bg-gray-50 rounded">
+          <p>Slug: {productSlug}</p>
+          <p>Images: {imageList.length}</p>
+          <p>Current: {currentImage}</p>
+        </div>
+      )}
     </div>
   );
 } 

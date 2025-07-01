@@ -10,7 +10,10 @@ COPY home/package*.json ./
 # bağımlılıkları yükle
 RUN npm install
 
-# home uygulamasını kopyala (shared klasörü dahil)
+# shared-components klasörünü kopyala
+COPY shared-components ./shared-components
+
+# home uygulamasını kopyala
 COPY home .
 
 # Next.js build işlemi

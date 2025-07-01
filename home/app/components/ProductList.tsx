@@ -32,7 +32,18 @@ function ProductCard({ product, onAddToCart, isLoading }: {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
       <div className="aspect-square overflow-hidden relative">
-        <Image src={product.imageUrl} alt={product.name} width={400} height={400} className="object-cover transition-transform duration-300 group-hover:scale-105" />
+        <Image 
+          src={product.imageUrl} 
+          alt={product.name} 
+          width={400} 
+          height={400} 
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            e.currentTarget.src = '/placeholder.svg';
+          }}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+        />
         
         {/* Stock Status Badge */}
         {!product.inStock && (
@@ -52,10 +63,7 @@ function ProductCard({ product, onAddToCart, isLoading }: {
       
       <div className="flex flex-1 flex-col p-6">
         <h3 className="text-lg font-semibold text-gray-800">
-          <Link href={`/product/${product.id}`} className="focus:outline-none">
-            <span className="absolute inset-0" aria-hidden="true" />
-            {product.name}
-          </Link>
+          {product.name}
         </h3>
         <p className="mt-1 text-sm text-gray-500">{product.category}</p>
         

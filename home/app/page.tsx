@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { getAllProducts } from '../lib/products';
 import ProductList from './components/ProductList';
 import { Metadata } from 'next/types';
+import { Product } from './api/products/route';
 
 // Metadata export for SEO
 export const metadata: Metadata = {
@@ -18,10 +18,60 @@ export const metadata: Metadata = {
 // ISR: Bu sayfa 60 saniyede bir revalidate edilecek
 export const revalidate = 60;
 
+// Static products data - mikro frontend için basit yaklaşım
+function getProducts(): Product[] {
+  return [
+    { 
+      id: 1, 
+      name: 'Akıllı Saat', 
+      category: 'Elektronik', 
+      price: '799.99 TL', 
+      imageUrl: '/products/smart-watch/main.jpg',
+      description: 'Yeni nesil akıllı saat. Sağlık takibi, spor modları ve daha fazlası.',
+      inStock: true,
+      rating: 4.5,
+      createdAt: '2024-01-15'
+    },
+    { 
+      id: 2, 
+      name: 'Kablosuz Kulaklık', 
+      category: 'Aksesuar', 
+      price: '449.99 TL', 
+      imageUrl: '/products/wireless-headphones/main.jpg',
+      description: 'Yüksek kaliteli ses, aktif gürültü engelleme özelliği.',
+      inStock: true,
+      rating: 4.7,
+      createdAt: '2024-01-10'
+    },
+    { 
+      id: 3, 
+      name: 'Mekanik Klavye', 
+      category: 'Bilgisayar', 
+      price: '1,299.99 TL', 
+      imageUrl: '/products/mechanical-keyboard/main.jpg',
+      description: 'RGB aydınlatmalı mekanik klavye. Oyun ve yazılım geliştirme için ideal.',
+      inStock: true,
+      rating: 4.3,
+      createdAt: '2024-01-08'
+    },
+    { 
+      id: 4, 
+      name: 'Oyuncu Faresi', 
+      category: 'Bilgisayar', 
+      price: '699.99 TL', 
+      imageUrl: '/products/gaming-mouse/main.jpg',
+      description: 'Yüksek DPI, programlanabilir tuşlar. E-spor için tasarlandı.',
+      inStock: false,
+      rating: 4.6,
+      createdAt: '2024-01-05'
+    }
+  ];
+}
+
 // --- SERVER COMPONENT PAGE ---
-export default async function Home() {
-  // Server-side data fetching
-  const products = await getAllProducts();
+export default function Home() {
+  // Static data - no async needed
+  const products = getProducts();
 
   return (
     <div className="flex min-h-screen flex-col">

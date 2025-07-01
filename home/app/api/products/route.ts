@@ -10,6 +10,34 @@ export interface Product {
   inStock?: boolean;
   rating?: number;
   createdAt?: string;
+  slug?: string;
+}
+
+// Product slug generator function
+function nameToSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/ı/g, 'i')
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Generate product image URL
+function getProductImageUrl(productName: string): string {
+  const slug = nameToSlug(productName);
+  
+  // Check if we have the actual image, otherwise use placeholder
+  const imageMap: { [key: string]: string } = {
+    'akilli-saat': '/products/smart-watch/main.jpg',
+    'smart-watch': '/products/smart-watch/main.jpg'
+  };
+  
+  return imageMap[slug] || '/placeholder.svg';
 }
 
 // Mock product database
@@ -19,66 +47,72 @@ const products: Product[] = [
     name: 'Akıllı Saat', 
     category: 'Elektronik', 
     price: '799.99 TL', 
-    imageUrl: '/products/smart-watch/main.jpg',
+    imageUrl: getProductImageUrl('Akıllı Saat'),
     description: 'Yeni nesil akıllı saat. Sağlık takibi, spor modları ve daha fazlası.',
     inStock: true,
     rating: 4.5,
-    createdAt: '2024-01-15'
+    createdAt: '2024-01-15',
+    slug: nameToSlug('Akıllı Saat')
   },
   { 
     id: 2, 
     name: 'Kablosuz Kulaklık', 
     category: 'Aksesuar', 
     price: '449.99 TL', 
-    imageUrl: '/products/wireless-headphones/main.jpg',
+    imageUrl: getProductImageUrl('Kablosuz Kulaklık'),
     description: 'Yüksek kaliteli ses, aktif gürültü engelleme özelliği.',
     inStock: true,
     rating: 4.7,
-    createdAt: '2024-01-10'
+    createdAt: '2024-01-10',
+    slug: nameToSlug('Kablosuz Kulaklık')
   },
   { 
     id: 3, 
     name: 'Mekanik Klavye', 
     category: 'Bilgisayar', 
     price: '1,299.99 TL', 
-    imageUrl: '/products/mechanical-keyboard/main.jpg',
+    imageUrl: getProductImageUrl('Mekanik Klavye'),
     description: 'RGB aydınlatmalı mekanik klavye. Oyun ve yazılım geliştirme için ideal.',
     inStock: true,
     rating: 4.3,
-    createdAt: '2024-01-08'
+    createdAt: '2024-01-08',
+    slug: nameToSlug('Mekanik Klavye')
   },
   { 
     id: 4, 
     name: 'Oyuncu Faresi', 
     category: 'Bilgisayar', 
     price: '699.99 TL', 
-    imageUrl: '/products/gaming-mouse/main.jpg',
+    imageUrl: getProductImageUrl('Oyuncu Faresi'),
     description: 'Yüksek DPI, programlanabilir tuşlar. E-spor için tasarlandı.',
     inStock: false,
     rating: 4.6,
-    createdAt: '2024-01-05'
+    createdAt: '2024-01-05',
+    slug: nameToSlug('Oyuncu Faresi')
   },
   { 
     id: 5, 
     name: 'Akıllı Telefon', 
     category: 'Elektronik', 
     price: '3,999.99 TL', 
-    imageUrl: '/products/smartphone/main.jpg',
+    imageUrl: getProductImageUrl('Akıllı Telefon'),
     description: 'Yeni nesil kamera teknolojisi, hızlı şarj ve daha fazlası.',
     inStock: true,
     rating: 4.8,
-    createdAt: '2024-01-20'
+    createdAt: '2024-01-20',
+    slug: nameToSlug('Akıllı Telefon')
   },
   { 
     id: 6, 
     name: 'Tablet', 
     category: 'Elektronik', 
     price: '2,199.99 TL', 
-    imageUrl: '/products/tablet/main.jpg',
+    imageUrl: getProductImageUrl('Tablet'),
     description: '10.9 inç ekran, Apple Pencil desteği, hafif tasarım.',
     inStock: true,
     rating: 4.4,
-    createdAt: '2024-01-12'
+    createdAt: '2024-01-12',
+    slug: nameToSlug('Tablet')
   }
 ];
 

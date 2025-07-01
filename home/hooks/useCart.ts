@@ -20,6 +20,9 @@ interface UseCartReturn {
   loading: boolean;
 }
 
+// Browser kontrolü
+const isBrowser = typeof window !== 'undefined';
+
 export function useCart(): UseCartReturn {
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -27,15 +30,26 @@ export function useCart(): UseCartReturn {
   // LocalStorage'dan cart count'u yükle
   useEffect(() => {
     const loadCartCount = () => {
+      if (!isBrowser) return;
+      
       try {
+        console.log('🔄 useCart: Loading cart from localStorage...');
         const stored = localStorage.getItem('cart-items');
+        console.log('💾 useCart: Raw localStorage data:', stored);
+        
         if (stored) {
           const items: CartItem[] = JSON.parse(stored);
+          console.log('📦 useCart: Parsed cart items:', items);
+          
           const count = items.reduce((sum, item) => sum + item.quantity, 0);
+          console.log('🔢 useCart: Total cart count:', count);
+          
           setCartCount(count);
+        } else {
+          console.log('⚠️ useCart: No items in localStorage');
         }
       } catch (error) {
-        console.error('Cart loading error:', error);
+        console.error('❌ useCart: Cart loading error:', error);
       }
     };
 
@@ -43,51 +57,67 @@ export function useCart(): UseCartReturn {
 
     // Cart update event'ini dinle
     const handleCartUpdate = (event: CustomEvent) => {
+      console.log('📣 useCart: Received cart-updated event:', event.detail);
       setCartCount(event.detail.count || 0);
     };
 
-    window.addEventListener('cart-updated', handleCartUpdate);
-    
-    return () => {
-      window.removeEventListener('cart-updated', handleCartUpdate);
-    };
+    if (isBrowser) {
+      window.addEventListener('cart-updated', handleCartUpdate);
+      
+      return () => {
+        window.removeEventListener('cart-updated', handleCartUpdate);
+      };
+    }
   }, []);
 
   // Ürün ekleme fonksiyonu
   const addToCart = (newItem: Omit<CartItem, 'quantity'>) => {
+    if (!isBrowser) return;
+    
     setLoading(true);
+    console.log('➕ useCart: Adding item to cart:', newItem);
     
     try {
       // Mevcut cart'ı yükle
       const stored = localStorage.getItem('cart-items');
+      console.log('💾 useCart: Current localStorage data:', stored);
+      
       let items: CartItem[] = stored ? JSON.parse(stored) : [];
       
       // Ürün zaten varsa quantity artır, yoksa ekle
       const existingItem = items.find(item => item.id === newItem.id);
       
       if (existingItem) {
+        console.log('🔄 useCart: Updating existing item quantity');
         existingItem.quantity += 1;
       } else {
-        items.push({
+        console.log('➕ useCart: Adding new item to cart');
+        const newCartItem = {
           ...newItem,
           quantity: 1
-        });
+        };
+        items.push(newCartItem);
       }
       
       // LocalStorage'a kaydet
-      localStorage.setItem('cart-items', JSON.stringify(items));
+      const jsonData = JSON.stringify(items);
+      console.log('💾 useCart: Saving to localStorage:', jsonData);
+      localStorage.setItem('cart-items', jsonData);
       
       // Cart count güncelle
       const newCount = items.reduce((sum, item) => sum + item.quantity, 0);
+      console.log('🔢 useCart: Updated cart count:', newCount);
       setCartCount(newCount);
       
       // Event gönder (cart app'ı dinliyor olabilir)
+      const eventData = { items, count: newCount };
+      console.log('📣 useCart: Dispatching cart-updated event:', eventData);
       window.dispatchEvent(new CustomEvent('cart-updated', { 
-        detail: { items, count: newCount }
+        detail: eventData
       }));
       
     } catch (error) {
-      console.error('Add to cart error:', error);
+      console.error('❌ useCart: Add to cart error:', error);
     } finally {
       setLoading(false);
     }
