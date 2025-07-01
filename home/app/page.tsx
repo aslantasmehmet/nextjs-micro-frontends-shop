@@ -1,96 +1,34 @@
-/* eslint-disable */
-// @ts-nocheck
-
-"use client";
-
 import Link from 'next/link';
-import Image from 'next/image';
-import toast from 'react-hot-toast';
-import { useCart } from '../hooks/useCart';
+import { getAllProducts } from '../lib/products';
+import ProductList from './components/ProductList';
+import { Metadata } from 'next/types';
 
-// --- ICONS ---
-const PlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <line x1="5" y1="12" x2="19" y2="12"></line>
-  </svg>
-);
+// Metadata export for SEO
+export const metadata: Metadata = {
+  title: 'NextShop - Yeni Sezon Ürünleri',
+  description: 'En yeni trendleri keşfedin ve gardırobunuzu güncelleyin. Elektronik, aksesuar ve bilgisayar ürünleri.',
+  keywords: 'e-ticaret, elektronik, aksesuar, bilgisayar, alışveriş',
+  openGraph: {
+    title: 'NextShop - Yeni Sezon Ürünleri',
+    description: 'En yeni trendleri keşfedin ve gardırobunuzu güncelleyin.',
+    type: 'website',
+  },
+};
 
-// --- DATA ---
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  imageUrl: string;
-}
+// ISR: Bu sayfa 60 saniyede bir revalidate edilecek
+export const revalidate = 60;
 
-const products: Product[] = [
-  { id: 1, name: 'Akıllı Saat', category: 'Elektronik', price: '799.99 TL', imageUrl: '/placeholder.svg' },
-  { id: 2, name: 'Kablosuz Kulaklık', category: 'Aksesuar', price: '449.99 TL', imageUrl: '/placeholder.svg' },
-  { id: 3, name: 'Mekanik Klavye', category: 'Bilgisayar', price: '1,299.99 TL', imageUrl: '/placeholder.svg' },
-  { id: 4, name: 'Oyuncu Faresi', category: 'Bilgisayar', price: '699.99 TL', imageUrl: '/placeholder.svg' },
-];
-
-// --- COMPONENTS ---
-function ProductCard({ product, onAddToCart, isLoading }: { 
-  product: Product; 
-  onAddToCart: (product: Product) => void; 
-  isLoading: boolean;
-}) {
-  return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
-      <div className="aspect-square overflow-hidden">
-        <Image src={product.imageUrl} alt={product.name} width={400} height={400} className="object-cover transition-transform duration-300 group-hover:scale-105" />
-      </div>
-      <div className="flex flex-1 flex-col p-6">
-        <h3 className="text-lg font-semibold text-gray-800">
-          <Link href="#" className="focus:outline-none">
-            <span className="absolute inset-0" aria-hidden="true" />
-            {product.name}
-          </Link>
-        </h3>
-        <p className="mt-1 text-sm text-gray-500">{product.category}</p>
-        <div className="mt-auto flex items-end justify-between pt-4">
-          <p className="text-xl font-bold text-gray-900">{product.price}</p>
-          <button
-            onClick={() => onAddToCart(product)}
-            disabled={isLoading}
-            className="z-10 flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PlusIcon className="h-4 w-4" />
-            <span>{isLoading ? 'Ekleniyor...' : 'Ekle'}</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- PAGE ---
-export default function Home() {
-  const { addToCart, loading } = useCart();
-
-  const handleAddToCart = (product: Product) => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    });
-    
-    toast.success(`${product.name} sepete eklendi!`, {
-      duration: 2000,
-      icon: '🛒',
-    });
-  };
+// --- SERVER COMPONENT PAGE ---
+export default async function Home() {
+  // Server-side data fetching
+  const products = await getAllProducts();
 
   return (
     <div className="flex min-h-screen flex-col">
       {/* Ana içerik */}
       <main className="flex-1">
         <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          {/* Hero Section */}
           <div className="mb-12 text-center">
             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
               Yeni Sezon Ürünleri
@@ -98,18 +36,26 @@ export default function Home() {
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
               En yeni trendleri keşfedin ve gardırobunuzu güncelleyin.
             </p>
+            
+            {/* Stats */}
+            <div className="mt-8 flex justify-center items-center gap-8 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>{products.filter(p => p.inStock).length} ürün stokta</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                <span>{products.length} toplam ürün</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                <span>Ücretsiz kargo</span>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map(product => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                onAddToCart={handleAddToCart}
-                isLoading={loading}
-              />
-            ))}
-          </div>
+          {/* Product Grid - Client Component */}
+          <ProductList products={products} />
         </div>
       </main>
 
@@ -123,7 +69,15 @@ export default function Home() {
             <div className="flex items-center gap-6 text-sm text-gray-500">
               <Link href="#" className="transition-colors hover:text-gray-800">Gizlilik Politikası</Link>
               <Link href="#" className="transition-colors hover:text-gray-800">Kullanım Şartları</Link>
+              <Link href="#" className="transition-colors hover:text-gray-800">İletişim</Link>
             </div>
+          </div>
+          
+          {/* Build Info */}
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-center text-xs text-gray-400">
+              Server-Side Rendered • ISR ile {revalidate}s cache • Build: {new Date().toISOString().split('T')[0]}
+            </p>
           </div>
         </div>
       </footer>
