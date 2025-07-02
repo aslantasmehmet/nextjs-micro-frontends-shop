@@ -5,7 +5,6 @@ import { useAppDispatch } from '../store/hooks';
 import { RootState } from '../store/store';
 import { removeFromCart, updateQuantity, clearCart } from '../store/cartSlice';
 import Link from 'next/link';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 // --- ICONS ---
@@ -100,8 +99,8 @@ export default function CartPage() {
             <div className="space-y-6 lg:col-span-2">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-start gap-6 rounded-xl bg-white p-6 shadow-sm">
-                  <Image 
-                    src={item.imageUrl || '/placeholder.jpg'} 
+                  <img 
+                    src={item.imageUrl ? `http://localhost:3000${item.imageUrl}` : '/placeholder.jpg'}
                     alt={item.name} 
                     width={100} 
                     height={100} 
