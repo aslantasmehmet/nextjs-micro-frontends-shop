@@ -3,7 +3,20 @@ import { CartState, CartItem, AddToCartRequest } from './types';
 
 // Fiyat hesaplama yardımcı fonksiyonu
 const calculatePrice = (priceString: string): number => {
-  return parseFloat(priceString.replace(/[^0-9,-]+/g, "").replace(',', '.'));
+  // Remove currency symbols and extra spaces
+  let cleanPrice = priceString.replace(/[^0-9,.]+/g, "");
+  
+  // Handle Turkish format: 1.299,99 -> 1299.99
+  if (cleanPrice.includes(',') && cleanPrice.includes('.')) {
+    // Format like "1.299,99" - dot is thousands, comma is decimal
+    cleanPrice = cleanPrice.replace(/\./g, '').replace(',', '.');
+  } else if (cleanPrice.includes(',')) {
+    // Format like "499,99" - comma is decimal
+    cleanPrice = cleanPrice.replace(',', '.');
+  }
+  
+  console.log(`CartSlice calculatePrice - Original: "${priceString}", Cleaned: "${cleanPrice}", Result: ${parseFloat(cleanPrice) || 0}`);
+  return parseFloat(cleanPrice) || 0;
 };
 
 // LocalStorage helper
