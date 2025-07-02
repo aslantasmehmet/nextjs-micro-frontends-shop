@@ -1,0 +1,11 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#f8fafc"/>
+  <rect x="100" y="80" width="200" height="240" rx="20" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <rect x="110" y="90" width="180" height="220" rx="15" fill="#0f172a"/>
+  <circle cx="200" cy="200" r="60" fill="#3b82f6"/>
+  <circle cx="200" cy="200" r="45" fill="none" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="200" y1="200" x2="200" y2="170" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="200" y1="200" x2="220" y2="200" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <text x="200" y="340" text-anchor="middle" fill="#475569" font-size="18" font-family="Arial, sans-serif" font-weight="bold">Akıllı Saat</text>
+  <text x="200" y="360" text-anchor="middle" fill="#64748b" font-size="14" font-family="Arial, sans-serif">Smart Watch</text>
+</svg> 
