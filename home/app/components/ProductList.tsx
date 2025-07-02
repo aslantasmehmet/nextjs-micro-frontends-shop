@@ -8,6 +8,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useCart } from '../../hooks/useCart';
 import { Product } from '../api/products/route';
+import React from 'react';
 
 // --- ICONS ---
 const PlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -20,6 +21,12 @@ const PlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const StarIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+  </svg>
+);
+
+const SpinnerIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+    <path d="M21 12a9 9 0 11-6.219-8.56"/>
   </svg>
 );
 
@@ -48,7 +55,7 @@ function ProductCard({ product, onAddToCart, isLoading }: {
         {/* Stock Status Badge */}
         {!product.inStock && (
           <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-            Stokta Yok
+            Out of Stock
           </div>
         )}
         
@@ -77,12 +84,24 @@ function ProductCard({ product, onAddToCart, isLoading }: {
           <button
             onClick={() => onAddToCart(product)}
             disabled={isLoading || !product.inStock}
-            className="z-10 flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
+            className="relative z-10 flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:transform-none disabled:shadow-md"
           >
-            <PlusIcon className="h-4 w-4" />
-            <span>
-              {!product.inStock ? 'Stokta Yok' : isLoading ? 'Ekleniyor...' : 'Ekle'}
-            </span>
+            {isLoading ? (
+              <>
+                <SpinnerIcon className="h-4 w-4" />
+                <span>Adding...</span>
+              </>
+            ) : !product.inStock ? (
+              <>
+                <span className="inline-block w-4 h-4 rounded-full bg-red-400"></span>
+                <span>Out of Stock</span>
+              </>
+            ) : (
+              <>
+                <PlusIcon className="h-4 w-4" />
+                <span>Add to Cart</span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -97,35 +116,70 @@ interface ProductListProps {
 
 export default function ProductList({ products }: ProductListProps) {
   const { addToCart, loading } = useCart();
+  const [loadingProducts, setLoadingProducts] = React.useState<Set<number>>(new Set());
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = async (product: Product) => {
     if (!product.inStock) {
-      toast.error('Bu ürün şu anda stokta bulunmuyor!', {
+      toast.error('This product is currently out of stock!', {
         duration: 3000,
         icon: '❌',
+        style: {
+          background: '#FEF2F2',
+          color: '#DC2626',
+          border: '1px solid #FECACA'
+        }
       });
       return;
     }
 
-    addToCart({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    });
-    
-    toast.success(`${product.name} sepete eklendi!`, {
-      duration: 2000,
-      icon: '🛒',
-    });
+    // Set loading state for this specific product
+    setLoadingProducts(prev => new Set(prev).add(product.id));
+
+    try {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      });
+      
+      toast.success(`${product.name} added to cart!`, {
+        duration: 2000,
+        icon: '🛒',
+        style: {
+          background: '#F0FDF4',
+          color: '#15803D',
+          border: '1px solid #BBF7D0'
+        }
+      });
+    } catch (error) {
+      toast.error('Failed to add product to cart. Please try again.', {
+        duration: 3000,
+        icon: '⚠️',
+        style: {
+          background: '#FFFBEB',
+          color: '#D97706',
+          border: '1px solid #FED7AA'
+        }
+      });
+    } finally {
+      // Remove loading state for this product after a short delay
+      setTimeout(() => {
+        setLoadingProducts(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(product.id);
+          return newSet;
+        });
+      }, 500);
+    }
   };
 
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900">Ürün bulunamadı</h3>
-        <p className="mt-2 text-sm text-gray-500">Şu anda görüntülenecek ürün bulunmuyor.</p>
+        <h3 className="text-lg font-medium text-gray-900">No products found</h3>
+        <p className="mt-2 text-sm text-gray-500">No products available to display at the moment.</p>
       </div>
     );
   }
@@ -137,7 +191,7 @@ export default function ProductList({ products }: ProductListProps) {
           key={product.id} 
           product={product} 
           onAddToCart={handleAddToCart}
-          isLoading={loading}
+          isLoading={loadingProducts.has(product.id)}
         />
       ))}
     </div>

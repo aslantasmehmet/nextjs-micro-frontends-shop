@@ -31,10 +31,20 @@ function nameToSlug(name: string): string {
 function getProductImageUrl(productName: string): string {
   const slug = nameToSlug(productName);
   
-  // Check if we have the actual image, otherwise use placeholder
+  // Map product slugs to their actual image paths
   const imageMap: { [key: string]: string } = {
+    'smart-watch': '/products/smart-watch/main.jpg',
+    'wireless-headphones': '/products/wireless-headphones/main.jpg',
+    'mechanical-keyboard': '/products/mechanical-keyboard/main.jpg',
+    'gaming-mouse': '/products/gaming-mouse/main.jpg',
+    'smartphone': '/placeholder.svg',
+    'tablet': '/products/tablet/main.jpg',
+    // Legacy Turkish names for backwards compatibility
     'akilli-saat': '/products/smart-watch/main.jpg',
-    'smart-watch': '/products/smart-watch/main.jpg'
+    'kablosuz-kulaklik': '/products/wireless-headphones/main.jpg',
+    'mekanik-klavye': '/products/mechanical-keyboard/main.jpg',
+    'oyuncu-faresi': '/products/gaming-mouse/main.jpg',
+    'akilli-telefon': '/placeholder.svg'
   };
   
   return imageMap[slug] || '/placeholder.svg';
@@ -44,71 +54,71 @@ function getProductImageUrl(productName: string): string {
 const products: Product[] = [
   { 
     id: 1, 
-    name: 'Akıllı Saat', 
-    category: 'Elektronik', 
+    name: 'Smart Watch', 
+    category: 'Electronics', 
     price: '799.99 TL', 
-    imageUrl: getProductImageUrl('Akıllı Saat'),
-    description: 'Yeni nesil akıllı saat. Sağlık takibi, spor modları ve daha fazlası.',
+    imageUrl: getProductImageUrl('Smart Watch'),
+    description: 'Next-generation smartwatch. Health tracking, sports modes and much more.',
     inStock: true,
     rating: 4.5,
     createdAt: '2024-01-15',
-    slug: nameToSlug('Akıllı Saat')
+    slug: nameToSlug('Smart Watch')
   },
   { 
     id: 2, 
-    name: 'Kablosuz Kulaklık', 
-    category: 'Aksesuar', 
+    name: 'Wireless Headphones', 
+    category: 'Accessories', 
     price: '449.99 TL', 
-    imageUrl: getProductImageUrl('Kablosuz Kulaklık'),
-    description: 'Yüksek kaliteli ses, aktif gürültü engelleme özelliği.',
+    imageUrl: getProductImageUrl('Wireless Headphones'),
+    description: 'High quality sound with active noise cancellation technology.',
     inStock: true,
     rating: 4.7,
     createdAt: '2024-01-10',
-    slug: nameToSlug('Kablosuz Kulaklık')
+    slug: nameToSlug('Wireless Headphones')
   },
   { 
     id: 3, 
-    name: 'Mekanik Klavye', 
-    category: 'Bilgisayar', 
-    price: '1,299.99 TL', 
-    imageUrl: getProductImageUrl('Mekanik Klavye'),
-    description: 'RGB aydınlatmalı mekanik klavye. Oyun ve yazılım geliştirme için ideal.',
+    name: 'Mechanical Keyboard', 
+    category: 'Computers', 
+    price: '1299.99 TL', 
+    imageUrl: getProductImageUrl('Mechanical Keyboard'),
+    description: 'RGB illuminated mechanical keyboard. Perfect for gaming and development.',
     inStock: true,
     rating: 4.3,
     createdAt: '2024-01-08',
-    slug: nameToSlug('Mekanik Klavye')
+    slug: nameToSlug('Mechanical Keyboard')
   },
   { 
     id: 4, 
-    name: 'Oyuncu Faresi', 
-    category: 'Bilgisayar', 
+    name: 'Gaming Mouse', 
+    category: 'Computers', 
     price: '699.99 TL', 
-    imageUrl: getProductImageUrl('Oyuncu Faresi'),
-    description: 'Yüksek DPI, programlanabilir tuşlar. E-spor için tasarlandı.',
+    imageUrl: getProductImageUrl('Gaming Mouse'),
+    description: 'High DPI, programmable buttons. Designed for esports.',
     inStock: false,
     rating: 4.6,
     createdAt: '2024-01-05',
-    slug: nameToSlug('Oyuncu Faresi')
+    slug: nameToSlug('Gaming Mouse')
   },
   { 
     id: 5, 
-    name: 'Akıllı Telefon', 
-    category: 'Elektronik', 
-    price: '3,999.99 TL', 
-    imageUrl: getProductImageUrl('Akıllı Telefon'),
-    description: 'Yeni nesil kamera teknolojisi, hızlı şarj ve daha fazlası.',
+    name: 'Smartphone', 
+    category: 'Electronics', 
+    price: '3999.99 TL', 
+    imageUrl: getProductImageUrl('Smartphone'),
+    description: 'Next-generation camera technology, fast charging and much more.',
     inStock: true,
     rating: 4.8,
     createdAt: '2024-01-20',
-    slug: nameToSlug('Akıllı Telefon')
+    slug: nameToSlug('Smartphone')
   },
   { 
     id: 6, 
     name: 'Tablet', 
-    category: 'Elektronik', 
-    price: '2,199.99 TL', 
+    category: 'Electronics', 
+    price: '2199.99 TL', 
     imageUrl: getProductImageUrl('Tablet'),
-    description: '10.9 inç ekran, Apple Pencil desteği, hafif tasarım.',
+    description: '10.9 inch display, Apple Pencil support, lightweight design.',
     inStock: true,
     rating: 4.4,
     createdAt: '2024-01-12',

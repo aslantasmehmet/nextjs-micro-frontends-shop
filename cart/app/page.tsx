@@ -110,7 +110,6 @@ export default function CartPage() {
   // Calculate individual item totals
   const getItemTotal = (item: CartItem) => {
     const price = formatPrice(item.price);
-    console.log(`Price debug - Original: "${item.price}", Parsed: ${price}, Quantity: ${item.quantity}`);
     return price * item.quantity;
   };
 

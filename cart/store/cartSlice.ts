@@ -15,7 +15,6 @@ const calculatePrice = (priceString: string): number => {
     cleanPrice = cleanPrice.replace(',', '.');
   }
   
-  console.log(`CartSlice calculatePrice - Original: "${priceString}", Cleaned: "${cleanPrice}", Result: ${parseFloat(cleanPrice) || 0}`);
   return parseFloat(cleanPrice) || 0;
 };
 
