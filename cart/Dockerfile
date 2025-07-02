@@ -10,9 +10,6 @@ COPY cart/package*.json ./
 # bağımlılıkları yükle
 RUN npm install
 
-# shared-components klasörünü kopyala
-COPY shared-components ./shared-components
-
 # cart uygulamasını kopyala
 COPY cart .
 

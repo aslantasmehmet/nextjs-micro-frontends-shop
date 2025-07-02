@@ -10,9 +10,6 @@ COPY home/package*.json ./
 # bağımlılıkları yükle
 RUN npm install
 
-# shared-components klasörünü kopyala
-COPY shared-components ./shared-components
-
 # home uygulamasını kopyala
 COPY home .
 
