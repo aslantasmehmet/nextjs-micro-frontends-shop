@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCart } from '../hooks/useCart';
 
 // --- SVG ICONS ---
 const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -36,7 +36,7 @@ const ShoppingBagIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 // --- HEADER COMPONENT ---
 export default function Header() {
-  const [cartCount] = useState(0); // Sepet sayısı için örnek state
+  const { cartCount } = useCart();
 
   return (
     <header className="w-full bg-white shadow-sm">
